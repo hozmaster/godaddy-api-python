@@ -93,22 +93,22 @@ def main():
         print('There was a problem with http://ipv4.icanhazip.com/')
     else:
         if godaddyIP != pubIP:
-            print ('IPs do not match')
-            print ('godaddyIP: {}'.format(godaddyIP))
-            print ('pubIP: {}'.format(pubIP))
-            print ('\nUpdating IP with GoDaddy:')
+            print('IPs do not match')
+            print('godaddyIP: {}'.format(godaddyIP))
+            print('pubIP: {}'.format(pubIP))
+            print('\nUpdating IP with GoDaddy:')
             update_godaddy_record(pubIP, domain, hostname)
             time.sleep(1)
-            print ('\nChecking if IP was successfully updated...\n')
+            print('\nChecking if IP was successfully updated...\n')
             time.sleep(2)
             newIP = get_domain_ip(domain, hostname)
-            print ('Rechecked, New Godaddy IP = {}\n'.format(newIP))
-            print ('Restarting HAProxy\n')
+            print('Rechecked, New Godaddy IP = {}\n'.format(newIP))
+            print('Restarting HAProxy\n')
             call(["/usr/local/etc/rc.d/haproxy.sh", "restart"])
         else:
-            print ('IPs match! No update needed')
-            print ('GodaddyIP: {}'.format(godaddyIP))
-            print ('PublicIP:  {}'.format(pubIP))
+            print('IPs match! No update needed')
+            print('GodaddyIP: {}'.format(godaddyIP))
+            print('PublicIP:  {}'.format(pubIP))
 
 if __name__ == '__main__':
     main()

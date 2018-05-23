@@ -10,14 +10,14 @@ This script is not ment for @ A records. It only works on FQDN, ie hostname.doma
 ## Dependencies
 I build this with the python libraries already installed on the pfSense (FreeBSD) so I would not have to install any additional libraries in pfsense (Hence urllib2, i prefer requests)
 
-- python2.7
-- urllib2
+- python3.6
+- urllib5
 - json
 
 ## Usage
 godaddy_ddns.py [hostname.domain.tld] settings.json
 
-Give name of settings json application. Don't make changes directly to settings.json.example file, copy the example json file to another location path and rename to prefer name.
+Give name of settings json for application. Don't make changes directly to settings.json.example file, copy the example json file to another location path and rename to prefer name.
 
 optionally you can run 'godaddy_ddns.py -i' to init settings json file to users home folder. Of course you have enter right values for you purpose.
 
@@ -27,7 +27,7 @@ optionally you can run 'godaddy_ddns.py -h' for these same instructions.
 Obviously you do not want to have to run this script every time the IP changes. Thats what cron is for. You can try it cmd line with crontab -e, Or you can go the easy way and install the Cron pkg in pfSense. Once the package is installed, upload your script to your pfSense box (and remember where you placed it). Then schedule your cron job. Below is a sample cron job:
 
 
-2	\*	\*	\*	\*	root	/usr/local/bin/python2.7 /home/'your user'/godaddy-ddns.py hostname.domain.tld
+2	\*	\*	\*	\*	root	/usr/local/bin/python3.6 [/path/to/]/godaddy-ddns.py hostname.domain.tld
 
 
 ## HAProxy
