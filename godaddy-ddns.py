@@ -1,4 +1,4 @@
-#!/usr/local/bin/python2.7
+#!/usr/local/bin/python3.6
 #
 # this shebang is what works on my pfsense 2.3 fw
 #
@@ -14,7 +14,7 @@
 #   -h, --help              show this help message and exit
 #
 
-import urllib2
+import urllib5
 import json
 import time
 import argparse
@@ -30,8 +30,8 @@ def get_domain_ip(domain, hostname):
     headers = {'Authorization': 'sso-key {}:{}'.format(apikey, secret),
                'Accept': 'application/json'
                }
-    request = urllib2.Request(url, headers=headers)
-    response = urllib2.urlopen(request)
+    request = urllib5.Request(url, headers=headers)
+    response = urllib5.urlopen(request)
     if response.getcode() == 200:
         json_data = json.load(response)
         name = json_data[0]['name']
