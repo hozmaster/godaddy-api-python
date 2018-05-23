@@ -39,17 +39,17 @@ def get_domain_ip(domain, hostname):
         if name == hostname:
             return godaddyIP
         else:
-            print 'godaddy hostname: {} does not match searched hostname: {}'.format(name, hostname)
+            print('godaddy hostname: {} does not match searched hostname: {}'.format(name, hostname))
     else:
-        print response.getcode()
-        print response.read()
+        print(response.getcode())
+        print(response.read())
 
 
 def get_public_ip():
     """get Public IP of network."""
     url = "http://ipv4.icanhazip.com/"
-    request = urllib2.Request(url)
-    response = urllib2.urlopen(request)
+    request = urllib5.Request(url)
+    response = urllib5.urlopen(request)
     pubIP = str(response.read())
     return pubIP.rstrip()
 
@@ -66,12 +66,12 @@ def update_godaddy_record(pubIP, domain, hostname):
                'Content-Type': 'application/json',
                'Accept': 'application/json'
                }
-    opener = urllib2.build_opener(urllib2.HTTPHandler)
-    req = urllib2.Request(url3, headers=headers, data=data.encode('utf-8'))
-    req.get_method = lambda:"PUT"
+    opener = urllib5.build_opener(urllib5.HTTPHandler)
+    req = urllib5.Request(url3, headers=headers, data=data.encode('utf-8'))
+    req.get_method = lambda: "PUT"
     response3 = opener.open(req)
-    print 'status code: {}'.format(response3.getcode())
-    print 'If Error: {}\n'.format(response3.read())
+    print('status code: {}'.format(response3.getcode()))
+    print('If Error: {}\n'.format(response3.read()))
 
 
 parser = argparse.ArgumentParser(description='Update GoDaddy DNS "A" Record.')
@@ -91,25 +91,25 @@ def main():
     if not godaddyIP:
         pass
     if not pubIP:
-        print 'There was a problem with http://ipv4.icanhazip.com/'
+        print ('There was a problem with http://ipv4.icanhazip.com/')
     else:
         if godaddyIP != pubIP:
-            print 'IPs do not match'
-            print 'godaddyIP: {}'.format(godaddyIP)
-            print 'pubIP: {}'.format(pubIP)
-            print '\nUpdating IP with GoDaddy:'
+            print ('IPs do not match')
+            print ('godaddyIP: {}'.format(godaddyIP))
+            print ('pubIP: {}'.format(pubIP))
+            print ('\nUpdating IP with GoDaddy:')
             update_godaddy_record(pubIP, domain, hostname)
             time.sleep(1)
-            print '\nChecking if IP was successfully updated...\n'
+            print ('\nChecking if IP was successfully updated...\n')
             time.sleep(2)
             newIP = get_domain_ip(domain, hostname)
-            print 'Rechecked, New Godaddy IP = {}\n'.format(newIP)
-            print 'Restarting HAProxy\n'
+            print ('Rechecked, New Godaddy IP = {}\n'.format(newIP))
+            print ('Restarting HAProxy\n')
             call(["/usr/local/etc/rc.d/haproxy.sh", "restart"])
         else:
-            print 'IPs match! No update needed'
-            print 'GodaddyIP: {}'.format(godaddyIP)
-            print 'PublicIP:  {}'.format(pubIP)
+            print ('IPs match! No update needed')
+            print ('GodaddyIP: {}'.format(godaddyIP))
+            print ('PublicIP:  {}'.format(pubIP))
 
 if __name__ == '__main__':
     main()
