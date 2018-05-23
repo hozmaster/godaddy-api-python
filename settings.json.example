@@ -1,0 +1,11 @@
+{
+	"go-daddy": {
+		"api.key": "",
+		"api.secret": "",
+		"domains": [
+			"www.example1.com",
+			"www.example2.com"
+		],
+		"haproxy.restart": false
+	}
+}

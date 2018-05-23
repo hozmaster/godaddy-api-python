@@ -15,9 +15,13 @@ I build this with the python libraries already installed on the pfSense (FreeBSD
 - json
 
 ## Usage
-godaddy_ddns.py hostname.domain.tld
+godaddy_ddns.py [hostname.domain.tld] settings.json
 
-optionally you can run godaddy_ddns.py -h for these same instructions.
+Give name of settings json application. Don't make changes directly to settings.json.example file, copy the example json file to another location path and rename to prefer name.
+
+optionally you can run 'godaddy_ddns.py -i' to init settings json file to users home folder. Of course you have enter right values for you purpose.
+
+optionally you can run 'godaddy_ddns.py -h' for these same instructions.
 
 ## Cron It!
 Obviously you do not want to have to run this script every time the IP changes. Thats what cron is for. You can try it cmd line with crontab -e, Or you can go the easy way and install the Cron pkg in pfSense. Once the package is installed, upload your script to your pfSense box (and remember where you placed it). Then schedule your cron job. Below is a sample cron job:

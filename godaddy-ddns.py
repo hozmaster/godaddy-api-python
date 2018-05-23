@@ -23,7 +23,6 @@ from subprocess import call
 apikey = ''
 secret = ''
 
-
 def get_domain_ip(domain, hostname):
     """get IP of A record from godaddy."""
     url = "https://api.godaddy.com/v1/domains/{}/records/A/{}".format(domain, hostname)
@@ -91,7 +90,7 @@ def main():
     if not godaddyIP:
         pass
     if not pubIP:
-        print ('There was a problem with http://ipv4.icanhazip.com/')
+        print('There was a problem with http://ipv4.icanhazip.com/')
     else:
         if godaddyIP != pubIP:
             print ('IPs do not match')
