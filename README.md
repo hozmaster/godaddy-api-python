@@ -1,4 +1,4 @@
-# Godaddy DDNS Script for pfSense
+# Godaddy DDNS Script
 
 ## Introduction
 This script dynamically udpates GoDaddy DNS A record. I have to use Godaddy for a domain and I wanted a way to update the A record whenever the IP changed. This is particularly useful for home networks hosting websites where the domain is hosted at godaddy. This script uses the godaddy api. You can obtain information here as well as keys https://developer.godaddy.com/. Make sure you generate production keys, do not use the test key/secret.
@@ -15,7 +15,7 @@ I build this with the python libraries already installed on the pfSense (FreeBSD
 - json
 
 ## Usage
-godaddy_ddns.py [hostname.domain.tld] settings.json
+godaddy_ddns.py [settings].json
 
 Give name of settings json for application. Don't make changes directly to settings.json.example file, copy the example json file to another location path and rename to prefer name.
 

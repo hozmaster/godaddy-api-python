@@ -1,11 +1,17 @@
 {
+    "ip.resolver" : "http://ipv4.icanhazip.com/",
 	"godaddy": {
 		"api.key": "",
 		"api.secret": "",
-		"domains": [
-			"www.example1.com",
-			"www.example2.com"
-		],
-		"haproxy.restart": false
-	}
+		"domains": [{
+			"hostname": "example.com",
+			"a-records": ["www.example.com", "test.example.com"]
+		},
+		{
+			"hostname": "example.org",
+			"a-records": ["@"]
+		}
+		]
+	},
+	"haproxy.restart": false
 }
