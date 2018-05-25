@@ -20,8 +20,6 @@ import time
 import argparse
 from subprocess import call
 
-apikey = ''
-secret = ''
 
 def get_domain_ip(domain, hostname):
     """get IP of A record from godaddy."""
