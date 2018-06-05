@@ -14,11 +14,15 @@
 #   -h, --help              show this help message and exit
 #
 
-import urllib5
 import json
+import urllib5
 import time
 import argparse
 from subprocess import call
+
+
+def load_config(file:str):
+    json = json.load (open(file))
 
 
 def get_domain_ip(domain, hostname):
@@ -108,5 +112,9 @@ def main():
             print('GodaddyIP: {}'.format(godaddyIP))
             print('PublicIP:  {}'.format(pubIP))
 
+
+def main2():
+    load_config("testing.json")
+
 if __name__ == '__main__':
-    main()
+    main2()
