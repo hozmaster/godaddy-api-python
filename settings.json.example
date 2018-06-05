@@ -4,11 +4,11 @@
 		"api.key": "",
 		"api.secret": "",
 		"domains": [{
-			"hostname": "example.com",
+			"domain": "example.com",
 			"a-records": ["www.example.com", "test.example.com"]
 		},
 		{
-			"hostname": "example.org",
+			"domain": "example.org",
 			"a-records": ["@"]
 		}
 		]
