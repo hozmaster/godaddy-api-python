@@ -7,11 +7,8 @@ import json
 
 class GoDaddyDNSUpdater(object):
 
-    def __init__(self, settings_file: str):
-
-        self.settings_json = settings_file
-        self.settings = json.load(open(self.settings_json))
-        pass
+    def __init__(self, file: str):
+        self.settings = json.load(open(file))
 
     def get_public_ip(self):
 
@@ -20,7 +17,7 @@ class GoDaddyDNSUpdater(object):
         response = urllib.request.urlopen(req)
         pub_ip = str(response.read())
 
-        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', pub_ip )
+        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', pub_ip)
         return ip[0]
 
     def main(self):
