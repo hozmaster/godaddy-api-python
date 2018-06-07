@@ -31,9 +31,13 @@ class GoDaddyDNSUpdater(object):
         connection.request("GET", path, "", headers)
         response = connection.getresponse()
         print("Status: {} and reason: {}".format(response.status, response.reason))
-        print(response.read().decode())
+        data = response.read().decode()
+        response_dict = json.loads(data)
+        headers = response.getheaders()
 
         connection.close()
+
+        return response_dict
 
     def get_domain_ip(self, domain):
         pass
