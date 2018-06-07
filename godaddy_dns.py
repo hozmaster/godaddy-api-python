@@ -5,6 +5,9 @@ import http.client
 import urllib.request
 import json
 
+api_base_url = "api.ote-godaddy.com"
+# api_base_url = "api.godaddy.com"
+
 
 class GoDaddyDNSUpdater(object):
 
@@ -17,11 +20,10 @@ class GoDaddyDNSUpdater(object):
 
         call(["/usr/local/etc/rc.d/haproxy.sh", "restart"])
 
-    def get_domain_info(self, domain):
+    def get_domain_available_info(self, domain):
 
-        url = "api.ote-godaddy.com"
         path = "/v1/domains/available?domain={}".format(domain)
-        connection = http.client.HTTPSConnection(url)
+        connection = http.client.HTTPSConnection(api_base_url)
 
         headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
                    'Accept': 'application/json'}
@@ -32,8 +34,6 @@ class GoDaddyDNSUpdater(object):
         print(response.read().decode())
 
         connection.close()
-
-        pass
 
     def get_domain_ip(self, domain):
         pass
@@ -85,7 +85,7 @@ class GoDaddyDNSUpdater(object):
 
         for domain in godaddy['domains']:
             for hostname in domain['a-records']:
-                self.get_domain_info(domain['domain'])
+                self.get_domain_available_info(domain['domain'])
 
         print(public_ip)
 
