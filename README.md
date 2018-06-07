@@ -34,3 +34,8 @@ Obviously you do not want to have to run this script every time the IP changes. 
 Final note, I use HAProxy and noticed that when my IP changed, HAProxy saw the new IP attached to my WAN, but would not allow connections until HAProxy was reloaded. This script reloads HAProxy. If you do not need that function, you can remove line 108.
 
 There is a checkbox 'Reload behaviour' in HAProxy that may do this function. I have not tested, as my IP hasn't changed at the time of this writing. 
+
+## Other
+
+Since this application is bound by MIT license, you can use or fork this application pretty much freely. However, you
+should delete encrypted json files found this repository from you copy of this repository.
