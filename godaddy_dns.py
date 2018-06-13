@@ -116,7 +116,7 @@ class GoDaddyDNSUpdater(object):
                 record_info = self.get_domains_records(domain['domain'], record['type'], record['name'])
                 print(record_info)
                 update_ip_info = self.put_domain_update_record(domain['domain'], public_ip, record['type'], record['name'])
-                print (update_ip_info)
+                print(update_ip_info)
 
         print(public_ip)
 
