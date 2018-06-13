@@ -5,8 +5,8 @@ import http.client
 import urllib.request
 import json
 
-api_base_url = "api.ote-godaddy.com"
-# api_base_url = "api.godaddy.com"
+# api_base_url = "api.ote-godaddy.com"
+api_base_url = "api.godaddy.com"
 
 
 class GoDaddyDNSUpdater(object):
@@ -20,26 +20,37 @@ class GoDaddyDNSUpdater(object):
 
         call(["/usr/local/etc/rc.d/haproxy.sh", "restart"])
 
-    def get_domain_available_info(self, domain):
+    def make_https_get_req (self, path: str, resource: str, headers: dict):
 
-        path = "/v1/domains/available?domain={}".format(domain)
         connection = http.client.HTTPSConnection(api_base_url)
+        connection.request("GET", path, resource, headers)
 
-        headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
-                   'Accept': 'application/json'}
-
-        connection.request("GET", path, "", headers)
         response = connection.getresponse()
-        print("Status: {} and reason: {}".format(response.status, response.reason))
         data = response.read().decode()
         response_dict = json.loads(data)
-        headers = response.getheaders()
 
         connection.close()
 
         return response_dict
 
-    def get_domain_ip(self, domain):
+    def get_domain_available_info(self, domain):
+
+        path = "/v1/domains/available?domain={}".format(domain)
+
+        headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
+                   'Accept': 'application/json'}
+
+        return self.make_https_get_req(path, "", headers)
+
+    def get_domains_records (self, domain, type, name):
+        path = "/v1/domains/{}/records/{}/{}".format(domain, type, name)
+
+        headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
+                   'Accept': 'application/json'}
+
+        return self.make_https_get_req(path, "", headers)
+
+    def get_domain_ip_record(self, domain):
         pass
 
     # def get_domain_ip_goddy(self, domain, hostname):
@@ -88,8 +99,12 @@ class GoDaddyDNSUpdater(object):
         self.secret = godaddy['api.secret']
 
         for domain in godaddy['domains']:
-            for hostname in domain['a-records']:
-                self.get_domain_available_info(domain['domain'])
+            domain_info = self.get_domain_available_info(domain['domain'])
+            print(domain_info)
+            records = domain['records']
+            for record in records:
+                record_info = self.get_domains_records(domain['domain'], record['type'], record['name'])
+                print(record_info)
 
         print(public_ip)
 

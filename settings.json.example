@@ -5,11 +5,12 @@
 		"api.secret": "",
 		"domains": [{
 			"domain": "example.com",
-			"a-records": ["www.example.com", "test.example.com"]
+            "records": [ { "name": "www", "type": "A" } ]
+
 		},
 		{
 			"domain": "example.org",
-			"a-records": ["@"]
+            "records": [ { "name": "www", "type": "A" } ]
 		}
 		]
 	},
