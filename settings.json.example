@@ -3,16 +3,12 @@
 	"godaddy": {
 		"api.key": "",
 		"api.secret": "",
-		"domains": [{
-			"domain": "example.com",
-            "records": [ { "name": "www", "type": "A" } ]
-
-		},
-		{
-			"domain": "example.org",
-            "records": [ { "name": "www", "type": "A" } ]
-		}
-		]
+		"domains": [{ "domain": "example.com",
+                  "records": [{"type": "A","name": "wwww" } ]
+            },
+            { "domain": "example.org",
+                  "records": [{"type": "A","name": "wwww" } ]
+            }
 	},
 	"haproxy.restart": false
 }
