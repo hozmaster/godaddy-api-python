@@ -15,12 +15,25 @@ class GoDaddyDNSUpdater(object):
         self.settings = json.load(open(file))
         self.api_key = ""
         self.secret = ""
+        self.last_updated_ip_address = "11.12.33.44"
 
     def restart_haproxy(self):
 
         call(["/usr/local/etc/rc.d/haproxy.sh", "restart"])
 
-    def make_https_get_req (self, path: str, resource: str, headers: dict):
+    def make_https_put_req(self, path: str, resource: str, headers: dict):
+        connection = http.client.HTTPSConnection(api_base_url)
+        connection.request("PUT", path, resource, headers)
+
+        response = connection.getresponse()
+        data = response.read().decode()
+        response_dict = json.loads(data)
+
+        connection.close()
+
+        return response_dict
+
+    def make_https_get_req(self, path: str, resource: str, headers: dict):
 
         connection = http.client.HTTPSConnection(api_base_url)
         connection.request("GET", path, resource, headers)
@@ -42,7 +55,7 @@ class GoDaddyDNSUpdater(object):
 
         return self.make_https_get_req(path, "", headers)
 
-    def get_domains_records (self, domain, type, name):
+    def get_domains_records(self, domain, type, name):
         path = "/v1/domains/{}/records/{}/{}".format(domain, type, name)
 
         headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
@@ -53,31 +66,25 @@ class GoDaddyDNSUpdater(object):
     def get_domain_ip_record(self, domain):
         pass
 
-    # def get_domain_ip_goddy(self, domain, hostname):
-    #
-    #     """get IP of A record from godaddy."""
-    #     url = "https://api.ote-godaddy.com/v1/domain/{}".format(domain)
-    #     headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
-    #                'Accept': 'application/json'}
-    #
-    #     request = urllib.request.Request(url, headers=headers)
-    #
-    #     # response = urllib.request.urlopen(request)
-    #     response = urllib.request.urlopen(request).read()
-    #
-    #     #
-    #     if response.getcode() == 200:
-    #         json_data = json.load(response)
-    #     #     name = json_data[0]['name']
-    #     #     godaddyIP = json_data[0]['data']
-    #     #     if name == hostname:
-    #     #         return godaddyIP
-    #     #     else:
-    #     #         print('godaddy hostname: {} does not match searched hostname: {}'.format(name, hostname))
-    #     else:
-    #          print(response.getcode())
-    #          print(response.read())
-    #     pass
+    def put_domain_update_record(self, domain: str, ip_address: str, type: str, name: str) -> str:
+        """Update Godaddy  record."""
+        data = json.dumps([{"data": ip_address,
+                            "ttl": 3600,
+                            "name": name,
+                            "type": type
+                            }])
+
+        path = "https://api.godaddy.com/v1/domains/{}/records/{}/{}".format(domain, type, name)
+        headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
+                   'Content-Type': 'application/json',
+                   'Accept': 'application/json'
+                   }
+
+        print(data)
+        print(path)
+        print(headers)
+
+        return self.put_domain_update_record(path, data, headers)
 
     def get_public_ip(self):
 
@@ -91,7 +98,10 @@ class GoDaddyDNSUpdater(object):
 
     def main(self):
 
-        public_ip = self.get_public_ip ()
+        public_ip = self.get_public_ip()
+
+        if public_ip != self.last_updated_ip_address:
+            print('ip address not match, update to provider')
 
         godaddy = self.settings["godaddy"]
 
@@ -105,6 +115,8 @@ class GoDaddyDNSUpdater(object):
             for record in records:
                 record_info = self.get_domains_records(domain['domain'], record['type'], record['name'])
                 print(record_info)
+                update_ip_info = self.put_domain_update_record(domain['domain'], public_ip, record['type'], record['name'])
+                print (update_ip_info)
 
         print(public_ip)
 
