@@ -116,19 +116,19 @@ class GoDaddyDNSUpdater(object):
             records = domain['records']
             for record in records:
                 record_info = self.get_domains_records(domain['domain'], record['type'], record['name'])
+                print(" domain {}, type: {} ", domain['domain'], record['type'])
                 if self.response_code == 200:
-                    print(record_info)
 
                     name = record_info[0]['name']
                     current_ip = record_info[0]['data']
                     record_type = record_info[0]['type']
 
                     if current_ip != public_ip:
-                        print("current ip do not match ! update it")
+                        print("... Current ip do not match ! update it.")
                         # update_ip_info = self.put_domain_update_record(domain['domain'], public_ip, record_type, name )
                         # print(update_ip_info)
                     else:
-                        print("IP addresses match, skip it.")
+                        print("... ip addresses match, skip it.")
 
 
 # you can run this function from command line and this will catch it
