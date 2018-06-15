@@ -62,7 +62,7 @@ class GoDaddyDNSUpdater(object):
 
         return self.make_https_get_req(path, "", headers)
 
-    def get_domains_records(self, domain, type, name):
+    def get_domains_records(self, domain, type: str, name):
         path = "/v1/domains/{}/records/{}/{}".format(domain, type, name)
 
         headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
@@ -116,7 +116,8 @@ class GoDaddyDNSUpdater(object):
             records = domain['records']
             for record in records:
                 record_info = self.get_domains_records(domain['domain'], record['type'], record['name'])
-                print(" domain {}, type: {} ", domain['domain'], record['type'])
+                output = "godaddy: domain {}, type: {}"
+                print (output.format(domain['domain'], record['type']))
                 if self.response_code == 200:
 
                     name = record_info[0]['name']
