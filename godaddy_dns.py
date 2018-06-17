@@ -126,11 +126,17 @@ class GoDaddyDNSUpdater(object):
 
                     if current_ip != public_ip:
                         print("... Current ip do not match ! update it.")
-                        # update_ip_info = self.put_domain_update_record(domain['domain'], public_ip, record_type, name )
-                        # print(update_ip_info)
+                        update_ip_info = self.put_domain_update_record(domain['domain'], public_ip, record_type, name )
+                        print(update_ip_info)
                     else:
                         print("... ip addresses match, skip it.")
-
+                else:
+                    output = " got invalid response from godaddy: {}"
+                    print(output.format(self.response_code))
+                    message = record_info['message']
+                    code = record_info['code']
+                    output2 = " godaddy: code : {}, message : {} "
+                    print(output2.format(code, message))
 
 # you can run this function from command line and this will catch it
 if __name__ == "__main__":
