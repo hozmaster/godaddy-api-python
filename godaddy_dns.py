@@ -75,6 +75,14 @@ class GoDaddyDNSUpdater(object):
     def get_domain_ip_record(self, domain):
         pass
 
+    def show_failed_json (self, code, error_json):
+        output = " got invalid response from godaddy: {}"
+        print(output.format(code))
+        message = error_json['message']
+        code = error_json['code']
+        output2 = " godaddy: code : {}, message : {} "
+        print(output2.format(code, message))
+
     def put_domain_update_record(self, domain: str, ip_address: str, type: str, name: str) -> str:
         """Update Godaddy  record."""
         data = json.dumps([{"data": ip_address,
@@ -131,12 +139,9 @@ class GoDaddyDNSUpdater(object):
                     else:
                         print("... ip addresses match, skip it.")
                 else:
-                    output = " got invalid response from godaddy: {}"
-                    print(output.format(self.response_code))
-                    message = record_info['message']
-                    code = record_info['code']
-                    output2 = " godaddy: code : {}, message : {} "
-                    print(output2.format(code, message))
+                    self.show_failed_json (self.response_code, record_info)
+                    return
+
 
 # you can run this function from command line and this will catch it
 if __name__ == "__main__":
