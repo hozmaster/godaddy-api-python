@@ -5,8 +5,8 @@ import http.client
 import urllib.request
 import json
 
-# api_base_url = "api.ote-godaddy.com"
-api_base_url = "api.godaddy.com"
+api_base_url = "api.ote-godaddy.com"
+#api_base_url = "api.godaddy.com"
 
 
 class GoDaddyDNSUpdater(object):
@@ -140,7 +140,6 @@ class GoDaddyDNSUpdater(object):
                         print("... ip addresses match, skip it.")
                 else:
                     self.show_failed_json (self.response_code, record_info)
-                    return
 
 
 # you can run this function from command line and this will catch it
