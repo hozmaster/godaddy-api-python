@@ -3,9 +3,10 @@
 	"godaddy": {
 		"api.key": "",
 		"api.secret": "",
-		"domains": [{ "domain": "example.com",
-                  "records": [{"type": "A","name": "wwww" } ]
-            },
+		"domains": [
+		    { "domain": "example.com", "records": [
+		        {"type": "A","name": "wwww" }
+		    ] },
             { "domain": "example.org",
                   "records": [{"type": "A","name": "wwww" } ]
             }

@@ -5,7 +5,10 @@ import http.client
 import urllib.request
 import json
 
+#test url,
 api_base_url = "api.ote-godaddy.com"
+
+#production url
 #api_base_url = "api.godaddy.com"
 
 
