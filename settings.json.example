@@ -10,6 +10,5 @@
             { "domain": "example.org",
                   "records": [{"type": "A","name": "wwww" } ]
             }
-	},
-	"haproxy.restart": false
+	}
 }
