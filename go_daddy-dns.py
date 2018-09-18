@@ -3,6 +3,8 @@ import re
 import sys
 import http.client
 import urllib.request
+import argparse
+
 import json
 
 #test url,
@@ -145,18 +147,21 @@ class GoDaddyDNSUpdater(object):
                     self.show_failed_json (self.response_code, record_info)
 
 
+def check_arg(args=None):
+    parser = argparse.ArgumentParser(description='Script to update GoDaddy DNS records')
+    parser.add_argument('-f', '--file',
+                        help='settings file. Must be json format.',
+                        default='')
+
+    results = parser.parse_args(args)
+    return results.file
+
+
 # you can run this function from command line and this will catch it
 if __name__ == "__main__":
 
-    args = sys.argv
-    settings_file = ""
+    file = check_arg(sys.argv[1:])
 
-    if len(args) == 2:
+    print('file', file)
 
-        settings_file = args[1]
-
-    else:
-        print('Try again with correct parameters!')
-        sys.exit(1)
-
-    GoDaddyDNSUpdater(settings_file).main()
+    # GoDaddyDNSUpdater(settings_file).main()
