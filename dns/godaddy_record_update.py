@@ -6,8 +6,8 @@ import urllib.request
 import json
 import argparse
 
-api_base_url = "api.ote-godaddy.com"
-# api_base_url = "api.godaddy.com"
+#api_base_url = "api.ote-godaddy.com"
+api_base_url = "api.godaddy.com"
 
 
 class GoDaddyDNSRecordUpdate(object):
@@ -33,6 +33,16 @@ class GoDaddyDNSRecordUpdate(object):
             data = ""
         connection.close()
         return data
+
+    def get_public_ip(self):
+
+        """get Public IP of network."""
+        req = urllib.request.Request(self.settings["ip.resolver"])
+        response = urllib.request.urlopen(req)
+        pub_ip = str(response.read())
+        ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', pub_ip)
+
+        return ip[0]
 
     def get_json_from_response (self, response: object):
 
@@ -96,6 +106,9 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = go_daddy['api.key']
         self.secret = go_daddy['api.secret']
 
+        pub_ip = self.get_public_ip()
+        print(pub_ip)
+
         for domain in go_daddy['domains']:
             # response = self.get_domain_available_info(domain['domain'])
             records = domain['records']
@@ -104,19 +117,19 @@ class GoDaddyDNSRecordUpdate(object):
                 output = "godaddy: domain {}, type: {}"
                 print (output.format(domain['domain'], record['type']))
                 if self.response_code == 200:
-                    current_data = ""
+                    record_ip = ""
                     if len(live_info):
-                        current_data = live_info[0]['data']
-                    if current_data != record['data']:
-                        print("... Current data do not match ! update it.")
-                        self.put_domain_update_record(domain['domain'], record['data'], record['type'], record['name'])
+                        record_ip = live_info[0]['data']
+                    if record_ip != pub_ip:
+                        print("... Current pub_ip do not match with dns records ! We must update it.")
+                        self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
                         if self.response_code is 200:
                             print("Update or creation record was done ")
                         else:
-                            print("Operation failed")
+                            print("Ip update req failed")
 
                     else:
-                        print("... data info addresses match, skip it.")
+                        print("... ip addresses match, no update needed.")
                 else:
                     output = " got invalid response from godaddy: {}"
                     print(output.format(self.response_code))
