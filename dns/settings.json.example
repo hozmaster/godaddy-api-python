@@ -10,5 +10,6 @@
             { "domain": "example.org",
                   "records": [{"type": "A","name": "wwww" } ]
             }
+        ]
 	}
 }
