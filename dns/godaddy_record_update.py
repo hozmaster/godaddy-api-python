@@ -6,8 +6,8 @@ import urllib.request
 import json
 import argparse
 
-# api_base_url = "api.ote-godaddy.com"
-api_base_url = "api.godaddy.com"
+api_base_url = "api.ote-godaddy.com"
+# api_base_url = "api.godaddy.com"
 
 
 class GoDaddyDNSRecordUpdate(object):
@@ -130,7 +130,7 @@ def check_arg(args=None):
     parser = argparse.ArgumentParser(description='Script to update GoDaddy DNS records.')
     parser.add_argument('-f', '--file',
                         help='settings file. Must be json format.',
-                        default='')
+                        default='', required=True)
 
     results = parser.parse_args(args)
     return results.file
@@ -141,6 +141,5 @@ if __name__ == "__main__":
 
     file = check_arg(sys.argv[1:])
 
-    print('file', file)
-
-    GoDaddyDNSRecordUpdate(file).main()
+    if file is not '':
+        GoDaddyDNSRecordUpdate(file).main()

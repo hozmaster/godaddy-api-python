@@ -16,7 +16,7 @@ I build this with the python libraries already installed on the pfSense (FreeBSD
 Git clone project to /opt/godaddy-folder and after that the Normal python env setup procedures.
 
 ## Usage
-godaddy_record_update.py [settings].json
+godaddy_record_update.py -f [settings].json
 
 Give name of settings json for application. Don't make changes directly to settings.json.example file, copy the example json file to another location path and rename to prefer name.
 
