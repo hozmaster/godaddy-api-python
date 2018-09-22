@@ -106,6 +106,8 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = go_daddy['api.key']
         self.secret = go_daddy['api.secret']
 
+        test_mode = go_daddy['test']
+
         pub_ip = self.get_public_ip()
         print(pub_ip)
 
@@ -122,7 +124,7 @@ class GoDaddyDNSRecordUpdate(object):
                         record_ip = live_info[0]['data']
                     if record_ip != pub_ip:
                         print("... Current pub_ip do not match with dns records ! We must update it.")
-                        self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
+                        # self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
                         if self.response_code is 200:
                             print("Update or creation record was done ")
                         else:
