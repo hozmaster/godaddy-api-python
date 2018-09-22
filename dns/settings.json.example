@@ -1,7 +1,7 @@
 {
     "ip.resolver" : "http://ipv4.icanhazip.com/",
-	"godaddy": {
-	    "test" : true,
+    "test" : true,
+    "godaddy": {
 		"api.key": "",
 		"api.secret": "",
 		"domains": [

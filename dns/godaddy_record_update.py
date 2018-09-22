@@ -6,7 +6,7 @@ import urllib.request
 import json
 import argparse
 
-#api_base_url = "api.ote-godaddy.com"
+api_test_base_url = "api.ote-godaddy.com"
 api_base_url = "api.godaddy.com"
 
 
@@ -14,6 +14,13 @@ class GoDaddyDNSRecordUpdate(object):
 
     def __init__(self, file: str):
         self.settings = json.load(open(file))
+        self.go_daddy_url = api_base_url
+
+        test = 'test' in self.settings
+
+        if test is True:
+            self.go_daddy_url = api_test_base_url
+
         self.api_key = ""
         self.secret = ""
         self.response_code = 200
@@ -52,7 +59,7 @@ class GoDaddyDNSRecordUpdate(object):
         return response_dict
 
     def make_https_get_req(self, path: str, resource: str, headers: dict):
-        connection = http.client.HTTPSConnection(api_base_url)
+        connection = http.client.HTTPSConnection(self.go_daddy_url)
         connection.request("GET", path, resource, headers)
 
         response = connection.getresponse()
@@ -106,8 +113,6 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = go_daddy['api.key']
         self.secret = go_daddy['api.secret']
 
-        test_mode = go_daddy['test']
-
         pub_ip = self.get_public_ip()
         print(pub_ip)
 
@@ -124,7 +129,7 @@ class GoDaddyDNSRecordUpdate(object):
                         record_ip = live_info[0]['data']
                     if record_ip != pub_ip:
                         print("... Current pub_ip do not match with dns records ! We must update it.")
-                        # self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
+                        self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
                         if self.response_code is 200:
                             print("Update or creation record was done ")
                         else:
