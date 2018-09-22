@@ -2,6 +2,7 @@ from subprocess import call
 import re
 import sys
 import http.client
+import datetime
 import urllib.request
 import json
 import argparse
@@ -24,6 +25,12 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = ""
         self.secret = ""
         self.response_code = 200
+
+    def time_stamp(self):
+
+        st = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+        return st
 
     def make_https_put_req(self, path: str, resource: str, headers: dict):
         connection = http.client.HTTPSConnection(api_base_url)
@@ -106,6 +113,12 @@ class GoDaddyDNSRecordUpdate(object):
 
         return self.make_https_put_req(path, req_content, headers)
 
+    def write_output(self, output):
+
+        time_stamp = self.time_stamp()
+
+        print('{} {}'.format(time_stamp, output))
+
     def main(self):
 
         go_daddy = self.settings["godaddy"]
@@ -113,8 +126,10 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = go_daddy['api.key']
         self.secret = go_daddy['api.secret']
 
+        cur_ip_output = "current_ip : {}"
+
         pub_ip = self.get_public_ip()
-        print(pub_ip)
+        self.write_output(cur_ip_output.format(pub_ip))
 
         for domain in go_daddy['domains']:
             # response = self.get_domain_available_info(domain['domain'])
@@ -122,28 +137,28 @@ class GoDaddyDNSRecordUpdate(object):
             for record in records:
                 live_info = self.get_domains_records(domain['domain'], record['type'], record['name'])
                 output = "godaddy: domain {}, type: {}"
-                print (output.format(domain['domain'], record['type']))
+                self.write_output(output.format(domain['domain'], record['type']))
                 if self.response_code == 200:
                     record_ip = ""
                     if len(live_info):
                         record_ip = live_info[0]['data']
                     if record_ip != pub_ip:
-                        print("... Current pub_ip do not match with dns records ! We must update it.")
+                        self.write_output("... Current pub_ip do not match with dns records ! We must update it.")
                         self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
                         if self.response_code is 200:
-                            print("Update or creation record was done ")
+                            self.write_output("Update or creation record was done ")
                         else:
-                            print("Ip update req failed")
+                            self.write_output("Ip update req failed")
 
                     else:
-                        print("... ip addresses match, no update needed.")
+                        self.write_output("... ip addresses match, no update needed.")
                 else:
                     output = " got invalid response from the godaddy service: {}"
-                    print(output.format(self.response_code))
+                    self.write_output(output.format(self.response_code))
                     message = live_info['message']
                     code = live_info['code']
                     output2 = " godaddy: code : {}, message : {} "
-                    print(output2.format(code, message))
+                    self.write_output(output2.format(code, message))
 
 
 def check_arg(args=None):
