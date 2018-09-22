@@ -138,7 +138,7 @@ class GoDaddyDNSRecordUpdate(object):
                     else:
                         print("... ip addresses match, no update needed.")
                 else:
-                    output = " got invalid response from godaddy: {}"
+                    output = " got invalid response from the godaddy service: {}"
                     print(output.format(self.response_code))
                     message = live_info['message']
                     code = live_info['code']
