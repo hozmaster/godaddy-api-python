@@ -3,11 +3,12 @@
 set -eu
 
 PROJECT_LOC=/opt/godaddy-api-python
+PYTHON_ENV=/usr/bin/python3
 
-. $PROJECT_LOC/locking
+# . $PROJECT_LOC/locking
 
-__prep_lock
-exclusive_lock_now || exit 1
+#__prep_lock
+#exclusive_lock_now || exit 1
 
 PYTHON_ENV=/usr/bin/python3
 
