@@ -2,6 +2,7 @@ from subprocess import call
 import re
 import sys
 import http.client
+import socket
 import datetime
 import urllib.request
 import json
@@ -48,6 +49,18 @@ class GoDaddyDNSRecordUpdate(object):
         connection.close()
         return data
 
+    def get_primary_ip(self):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        try:
+            s.connect(('10.255.255.255', 1))
+            ip = s.getsockname()[0]
+        except:
+            ip = "127.0.0.1"
+        finally:
+            s.close()
+
+        return ip
+
     def get_public_ip(self):
 
         """get Public IP of network."""
@@ -58,7 +71,7 @@ class GoDaddyDNSRecordUpdate(object):
 
         return ip[0]
 
-    def get_json_from_response (self, response: object):
+    def get_json_from_response(self, response: object):
 
         data = response.read().decode()
         response_dict = json.loads(data)
@@ -100,10 +113,10 @@ class GoDaddyDNSRecordUpdate(object):
     def put_domain_update_record(self, domain: str, data: str, type: str, name: str) -> object:
         """Update Godaddy  record."""
         req_content = json.dumps([{"data": data,
-                            "ttl": 3600,
-                            "name": name,
-                            "type": type
-                            }])
+                                   "ttl": 3600,
+                                   "name": name,
+                                   "type": type
+                                   }])
 
         path = "https://api.godaddy.com/v1/domains/{}/records/{}/{}".format(domain, type, name)
         headers = {'Authorization': 'sso-key {}:{}'.format(self.api_key, self.secret),
@@ -161,20 +174,28 @@ class GoDaddyDNSRecordUpdate(object):
                     self.write_output(output2.format(code, message))
 
 
-def check_arg(args=None):
+def check_arg(args):
     parser = argparse.ArgumentParser(description='Script to update GoDaddy DNS records.')
     parser.add_argument('-f', '--file',
-                        help='settings file. Must be json format.',
-                        default='', required=True)
+                        help='Settings file. Must be json format.',
+                        default='', required=True),
+    parser.add_argument('-d', '--default',
+                        help='Get IP address using default route information',
+                        action="store_true",
+                        default=False, required=False),
 
     results = parser.parse_args(args)
-    return results.file
+    return results
 
 
 # you can run this function from command line and this will catch it
 if __name__ == "__main__":
 
-    file = check_arg(sys.argv[1:])
+    args = check_arg(sys.argv[1:])
+    print(args)
 
-    if file is not '':
-        GoDaddyDNSRecordUpdate(file).main()
+    # file = check_arg(sys.argv[1:])
+    # use_default_route = check_arg(sys.argv[1:])
+
+    # if file is not '':
+    #     GoDaddyDNSRecordUpdate(file).main()
