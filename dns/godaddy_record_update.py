@@ -14,8 +14,8 @@ api_base_url = "api.godaddy.com"
 
 class GoDaddyDNSRecordUpdate(object):
 
-    def __init__(self, file: str):
-        self.settings = json.load(open(file))
+    def __init__(self, settings_file: str, mode):
+        self.settings = json.load(open(settings_file))
         self.go_daddy_url = api_base_url
 
         test = 'test' in self.settings
@@ -25,6 +25,7 @@ class GoDaddyDNSRecordUpdate(object):
 
         self.api_key = ""
         self.secret = ""
+        self.mode = mode
         self.response_code = 200
 
     def time_stamp(self):
@@ -61,7 +62,7 @@ class GoDaddyDNSRecordUpdate(object):
 
         return ip
 
-    def get_public_ip(self):
+    def get_public_ip_via_http(self):
 
         """get Public IP of network."""
         req = urllib.request.Request(self.settings["ip.resolver"])
@@ -141,7 +142,11 @@ class GoDaddyDNSRecordUpdate(object):
 
         cur_ip_output = "current_ip : {}"
 
-        pub_ip = self.get_public_ip()
+        if self.mode == 'http':
+            pub_ip = self.get_public_ip_via_http()
+        else:
+            pub_ip = self.get_primary_ip()
+
         self.write_output(cur_ip_output.format(pub_ip))
 
         for domain in go_daddy['domains']:
@@ -179,10 +184,10 @@ def check_arg(args):
     parser.add_argument('-f', '--file',
                         help='Settings file. Must be json format.',
                         default='', required=True),
-    parser.add_argument('-d', '--default',
-                        help='Get IP address using default route information',
-                        action="store_true",
-                        default=False, required=False),
+    parser.add_argument('-m', '--mode',
+                        help='Get IP address using ip route or using http fetch',
+                        choices=['http', 'route'],
+                        default='route', required=False),
 
     results = parser.parse_args(args)
     return results
@@ -192,10 +197,5 @@ def check_arg(args):
 if __name__ == "__main__":
 
     args = check_arg(sys.argv[1:])
-    print(args)
-
-    # file = check_arg(sys.argv[1:])
-    # use_default_route = check_arg(sys.argv[1:])
-
-    # if file is not '':
-    #     GoDaddyDNSRecordUpdate(file).main()
+    if args.file is not '':
+        GoDaddyDNSRecordUpdate(args.file, args.mode).main()
