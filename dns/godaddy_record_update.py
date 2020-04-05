@@ -14,7 +14,7 @@ api_base_url = "api.godaddy.com"
 
 class GoDaddyDNSRecordUpdate(object):
 
-    def __init__(self, settings_file: str, mode):
+    def __init__(self, settings_file: str, mode, noop):
         self.settings = json.load(open(settings_file))
         self.go_daddy_url = api_base_url
 
@@ -26,6 +26,7 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = ""
         self.secret = ""
         self.mode = mode
+        self.noop = noop
         self.response_code = 200
 
     def time_stamp(self):
@@ -161,12 +162,15 @@ class GoDaddyDNSRecordUpdate(object):
                     if len(live_info):
                         record_ip = live_info[0]['data']
                     if record_ip != pub_ip:
-                        self.write_output("... Current pub_ip do not match with dns records ! We must update it.")
-                        self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
-                        if self.response_code is 200:
-                            self.write_output("Update or creation record was done ")
+                        if not self.noop:
+                            self.write_output("... Current pub_ip do not match with dns records ! Update it.")
+                            self.put_domain_update_record(domain['domain'], pub_ip, record['type'], record['name'])
+                            if self.response_code is 200:
+                                self.write_output("Record updated or created.")
+                            else:
+                                self.write_output("Ip update req failed")
                         else:
-                            self.write_output("Ip update req failed")
+                            self.write_output("... noop set, do not update records.")
 
                     else:
                         self.write_output("... ip addresses match, no update needed.")
@@ -188,6 +192,9 @@ def check_arg(args):
                         help='Get IP address using ip route or using http fetch',
                         choices=['http', 'route'],
                         default='route', required=False),
+    parser.add_argument('-n', '--noop',
+                        help='When set, script is not send update request to the provider',
+                        action='store_true', required=False),
 
     results = parser.parse_args(args)
     return results
@@ -198,4 +205,4 @@ if __name__ == "__main__":
 
     args = check_arg(sys.argv[1:])
     if args.file is not '':
-        GoDaddyDNSRecordUpdate(args.file, args.mode).main()
+        GoDaddyDNSRecordUpdate(args.file, args.mode, args.noop).main()
