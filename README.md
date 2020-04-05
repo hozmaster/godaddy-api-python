@@ -33,4 +33,4 @@ Normal way :
 ## Other
 
 Since this application is bound by MIT license, you can use or fork this application pretty much freely. However, you
-should delete any encrypted json files found this project from you copy of this repository.
+should delete any encrypted json files found this project from your copy of this repository.

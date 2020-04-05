@@ -141,7 +141,7 @@ class GoDaddyDNSRecordUpdate(object):
         self.api_key = go_daddy['api.key']
         self.secret = go_daddy['api.secret']
 
-        cur_ip_output = "current_ip : {}"
+        cur_ip_output = "public ip : {}"
 
         if self.mode == 'http':
             pub_ip = self.get_public_ip_via_http()
