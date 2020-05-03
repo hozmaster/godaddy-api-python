@@ -1,4 +1,4 @@
-import socket, struct
+import socket, struct, fcntl
 
 
 class GetPrimaryIp(object):
@@ -7,30 +7,44 @@ class GetPrimaryIp(object):
 
     def get_default_gateway_linux(self):
         """Read the default gateway directly from /proc."""
-        with open("/proc/net/route") as fh:
+        with open("./test.log") as fh:
             for line in fh:
                 fields = line.strip().split()
                 print(fields)
+                if fields[0] != 'Iface':
+                    print(socket.inet_ntoa(struct.pack("<L", int(fields[1], 16))))
                 if fields[1] != '00000000' or not int(fields[3], 16) & 2:
                     continue
 
-                return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
+                # return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
-    def get_primary_ip(self):
+    def get_ip_address(self, ifname):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        try:
-            s.connect(('10.255.255.255', 1))
-            ip = s.getsockname()[0]
-        except:
-            ip = "127.0.0.1"
-        finally:
-            s.close()
+        buffer = fcntl.ioctl(
+            s.fileno(),
+            0x8915,  # SIOCGIFADDR
+            struct.pack('256s',
+                        bytes(ifname[:15], 'utf-8'))
+        )[20:24]
 
-        return ip
+        return socket.inet_ntoa(buffer)
+        # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # info = socket.inet_ntoa(
+        #     fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', bytes(ifname[:15], 'utf-8'))[20:24]))
+        # print(info)
+        # return info  # socket.inet_ntoa(info)
+        # return socket.inet_ntoa(fcntl.ioctl(
+        #     s.fileno(),
+        #     0x8915,  # SIOCGIFADDR
+        #     struct.pack('256s', ifname[:15])
+        # )[20:24])
 
     def main(self):
-        ip = self.get_primary_ip()
-        print(self.get_default_gateway_linux())
+        # ip = self.get_primary_ip()
+        # print(self.get_default_gateway_linux())
+        # print(ip)
+
+        ip = self.get_ip_address('enp11s0')
         print(ip)
 
 
