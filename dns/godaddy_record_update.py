@@ -190,7 +190,7 @@ def check_arg(args):
                         default='', required=True),
     parser.add_argument('-m', '--mode',
                         help='Get IP address using ip route or using http fetch',
-                        choices=['http', 'route'],
+                        choices=['http', 'route', 'iface'],
                         default='route', required=False),
     parser.add_argument('-n', '--noop',
                         help='When set, script is not send update request to the provider',
