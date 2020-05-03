@@ -3,7 +3,10 @@ import re
 import sys
 import http.client
 import socket
+import fcntl
+import struct
 import datetime
+import ipaddress
 import urllib.request
 import json
 import argparse
@@ -66,7 +69,7 @@ class GoDaddyDNSRecordUpdate(object):
     def get_public_ip_via_http(self):
 
         """get Public IP of network."""
-        req = urllib.request.Request(self.settings["ip.resolver"])
+        req = urllib.request.Request(self.settings['config']["ip.resolver"])
         response = urllib.request.urlopen(req)
         pub_ip = str(response.read())
         ip = re.findall(r'[0-9]+(?:\.[0-9]+){3}', pub_ip)
@@ -112,6 +115,17 @@ class GoDaddyDNSRecordUpdate(object):
 
         return json_data
 
+    def get_ip_address(self, ifname):
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        buffer = fcntl.ioctl(
+            s.fileno(),
+            0x8915,  # SIOCGIFADDR
+            struct.pack('256s',
+                        bytes(ifname[:15], 'utf-8'))
+        )[20:24]
+
+        return socket.inet_ntoa(buffer)
+
     def put_domain_update_record(self, domain: str, data: str, type: str, name: str) -> object:
         """Update Godaddy  record."""
         req_content = json.dumps([{"data": data,
@@ -145,10 +159,17 @@ class GoDaddyDNSRecordUpdate(object):
 
         if self.mode == 'http':
             pub_ip = self.get_public_ip_via_http()
+        elif self.mode == 'iface':
+            iface = self.settings['config']['iface']
+            pub_ip = self.get_ip_address(iface)
         else:
+            # this is most uncertain way to catch current ip since it may change during statups
             pub_ip = self.get_primary_ip()
 
         self.write_output(cur_ip_output.format(pub_ip))
+        if ipaddress.ip_address(pub_ip).is_private is True:
+            print("Private ip address detected. Cannot continue since it's not valid ip for public address ")
+            return 1
 
         for domain in go_daddy['domains']:
             # response = self.get_domain_available_info(domain['domain'])
@@ -181,6 +202,7 @@ class GoDaddyDNSRecordUpdate(object):
                     code = live_info['code']
                     output2 = " godaddy: code : {}, message : {} "
                     self.write_output(output2.format(code, message))
+        return 0
 
 
 def check_arg(args):
@@ -204,5 +226,10 @@ def check_arg(args):
 if __name__ == "__main__":
 
     args = check_arg(sys.argv[1:])
+    ret_code = 0
     if args.file is not '':
-        GoDaddyDNSRecordUpdate(args.file, args.mode, args.noop).main()
+        ret_code = GoDaddyDNSRecordUpdate(args.file, args.mode, args.noop).main()
+    else:
+        ret_code = 1
+
+    exit(ret_code)

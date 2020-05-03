@@ -28,22 +28,8 @@ class GetPrimaryIp(object):
         )[20:24]
 
         return socket.inet_ntoa(buffer)
-        # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # info = socket.inet_ntoa(
-        #     fcntl.ioctl(s.fileno(), 0x8915, struct.pack('256s', bytes(ifname[:15], 'utf-8'))[20:24]))
-        # print(info)
-        # return info  # socket.inet_ntoa(info)
-        # return socket.inet_ntoa(fcntl.ioctl(
-        #     s.fileno(),
-        #     0x8915,  # SIOCGIFADDR
-        #     struct.pack('256s', ifname[:15])
-        # )[20:24])
 
     def main(self):
-        # ip = self.get_primary_ip()
-        # print(self.get_default_gateway_linux())
-        # print(ip)
-
         ip = self.get_ip_address('enp11s0')
         print(ip)
 
