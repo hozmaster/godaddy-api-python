@@ -15,7 +15,6 @@ class GetPrimaryIp(object):
                     print(socket.inet_ntoa(struct.pack("<L", int(fields[1], 16))))
                 if fields[1] != '00000000' or not int(fields[3], 16) & 2:
                     continue
-
                 # return socket.inet_ntoa(struct.pack("<L", int(fields[2], 16)))
 
     def get_ip_address(self, ifname):
