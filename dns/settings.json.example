@@ -6,10 +6,10 @@
 		"api.secret": "",
 		"domains": [
 		    { "domain": "example.com", "records": [
-		        {"type": "A","name": "wwww" }
+		        {"type": "A","name": "www" }
 		    ] },
             { "domain": "example.org",
-                  "records": [{"type": "A","name": "wwww" } ]
+                  "records": [{"type": "A","name": "www" } ]
             }
         ]
 	}
